@@ -22,15 +22,4 @@ public class Repeater implements BiFunction<Flux<String>, Flux<Integer>, Flux<St
 
 
 
-
-    public static void main(String[] args) throws IOException {
-        Flux<String> strings = Flux.interval(Duration.ofMillis(5000L)).map(i -> numbers[i.intValue() % numbers.length]);
-        Flux<Integer> ints = Flux.interval(Duration.ofMillis(6000L)).map(i -> i.intValue() % numbers.length);
-        new Repeater().apply(
-                strings,
-                ints
-        )[0].subscribe(System.out::println);
-        System.in.read();
-    }
-
 }
