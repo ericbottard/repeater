@@ -12,7 +12,10 @@ public class Repeater implements BiFunction<Flux<String>, Flux<Integer>, Flux<St
 
     @Override
     public Flux<String>[] apply(Flux<String> stringFlux, Flux<Integer> integerFlux) {
-        return new Flux[]{stringFlux.zipWith(integerFlux).flatMap(t -> {
+        System.out.println("Invoked");
+        return new Flux[]{stringFlux.zipWith(integerFlux)
+            .doOnNext(System.out::println)
+            .flatMap(t -> {
             if (t.getT2().intValue() == 0) {
                 return Flux.empty();
             }
