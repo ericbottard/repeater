@@ -1,28 +1,31 @@
 package com.acme;
 
+import reactor.core.publisher.Flux;
+import reactor.math.MathFlux;
+
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
-import reactor.core.publisher.Flux;
-
-public class Repeater implements BiFunction<Flux<String>, Flux<Integer>, Flux<String>[]> {
-
-    private static final String[] numbers = new String[]{"zero", "one", "two", "three", "four", "five"};
+public class Repeater implements BiFunction<Flux<String>, Flux<Integer>, Flux<?>[]> {
 
     @Override
-    public Flux<String>[] apply(Flux<String> stringFlux, Flux<Integer> integerFlux) {
-        System.out.println("Invoked");
-        return new Flux[]{stringFlux.zipWith(integerFlux)
-            .doOnNext(System.out::println)
-            .flatMap(t -> {
-            if (t.getT2().intValue() == 0) {
-                return Flux.empty();
-            }
-            return Flux.just(t.getT1()).repeat(t.getT2() - 1);
-        })};
+    public Flux<?>[] apply(Flux<String> stringFlux, Flux<Integer> integerFlux) {
+
+
+        Flux<String> repeated = stringFlux.zipWith(integerFlux)
+                .doOnNext(System.out::println)
+                .flatMap(t -> Flux.fromIterable(Collections.nCopies(t.getT2(), t.getT1()))
+                );
+
+        Flux<Integer> sum = integerFlux.buffer(3, 1).map(l -> l.stream().mapToInt(Integer::intValue).sum());
+        //Flux<Integer> sum = Flux.interval(Duration.ofMillis(500)).map(Long::intValue);
+
+        return new Flux[]{repeated, sum};
     }
-
-
 
 }
