@@ -22,10 +22,10 @@ public class Repeater implements BiFunction<Flux<String>, Flux<Integer>, Flux<?>
                 .flatMap(t -> Flux.fromIterable(Collections.nCopies(t.getT2(), t.getT1()))
                 );
 
-        Flux<Integer> sum = integerFlux.buffer(3, 1).map(l -> l.stream().mapToInt(Integer::intValue).sum());
+        //Flux<Integer> sum = integerFlux.buffer(3, 1).map(l -> l.stream().mapToInt(Integer::intValue).sum());
         //Flux<Integer> sum = Flux.interval(Duration.ofMillis(500)).map(Long::intValue);
 
-        return new Flux[]{repeated, sum};
+        return new Flux[]{repeated/*, sum*/};
     }
 
 }
